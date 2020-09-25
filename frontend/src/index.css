@@ -1,7 +1,6 @@
 @import "~materialize-css/dist/css/materialize.min.css";
 body{
     background-color: #E5E5E5;
-	/* background-image: url("images/photo-1553770710-767cf46bfef4.jpg"); */
 	background-image: url("images/01a3fd9b46d5a5af6cb651a59c44b2aade95e9a0.jpeg");
     background-repeat: no-repeat;
     background-size: cover;

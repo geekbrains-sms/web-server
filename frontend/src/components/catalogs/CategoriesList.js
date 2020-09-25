@@ -26,7 +26,8 @@ export const CategoriesList = ({ categories, setCategories }) => {
 			let fetchCategories;
 			if (method === 'DELETE') fetchCategories = await request(`/api/v1/categories/${visible.category.id}`, method, null,{Authorization: `Bearer ${token}`});
 			else fetchCategories = await request('/api/v1/categories', method, category,{Authorization: `Bearer ${token}`});
-			setCategories(fetchCategories)
+			setVisible(false);
+			setCategories(fetchCategories);
 		} catch (error) {}
 	}
 	const deleteHandler = (id, value) => {
