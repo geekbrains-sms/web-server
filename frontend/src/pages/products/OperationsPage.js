@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useCallback, useState } from 'react'
 import { AuthContext } from '../../context/AuthContext'
 import { useHttp } from '../../hooks/http.hook'
-import { Operations} from '../../components/products/Operations'
+import { Actions} from '../../components/products/Actions'
 import { Loader } from '../../components/Loader'
 import { SideBar } from '../../components/products/SideBar'
 
@@ -11,11 +11,9 @@ export const ProductsOperationPage = () =>{
 	const [ data, setData] = useState({})
 	const fetchData = useCallback(async () => {
 		try {
-			const fetchedPostings = await request('/api/v1/postings','GET',null,{Authorization: `Bearer ${token}`});
-			const fetchedProducts = await request('/api/v1/products','GET',null,{Authorization: `Bearer ${token}`});
+			const fetchedActions = await request('/api/v1/actions','GET',null,{Authorization: `Bearer ${token}`});
 			setData({
-				postings: fetchedPostings,
-				products: fetchedProducts
+				actions: fetchedActions
 			})
 		} catch (error) {}
 	},[request, token])
@@ -29,7 +27,7 @@ export const ProductsOperationPage = () =>{
 			<div className="row">
 			{ <SideBar/> }
 				<div className="col xl8 work-area">
-					{ loading ? <Loader /> : <Operations data={ data } setData={ setData } /> } 
+					{ loading ? <Loader /> : <Actions data={ data } setData={ setData } /> } 
 				</div>
 			</div>
 		</div>

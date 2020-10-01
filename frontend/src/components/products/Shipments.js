@@ -11,47 +11,43 @@ export const Shipments = ({ data, setData }) => {
 
 	const createHandler = async () => {
 		setVisible({ 
-			selectedProduct: -1,
-			contractors: data.contractors,
+			contractors: await request('/api/v1/contractors','GET',null,{Authorization: `Bearer ${token}`}),
+			funds:  await request(`/api/v1/funds`,'GET',null,{Authorization: `Bearer ${token}`}),
 			visible: true 
 		});
 	}
-	const changeHandler = event => {
+	const changeHandler = async event => {
 		let value = Object.assign({},visible);
 		switch (event.target.name){
 			case 'product':
-				let fund = data.funds.filter(p => {return p.id == event.target.value})[0];
+				let fund = await request(`/api/v1/funds/product/${event.target.value}`,'GET',null,{Authorization: `Bearer ${token}`});
 				value.shipment = value.shipment || {};
+				value.fund = fund;
 				value.shipment.product = fund.product;
-				value.product = fund;
-				value.selectedProduct = event.target.value;
-				value.balance = fund.balance;
+				value.selectedProduct = fund.id;
+				value.shipment.quantity = value.shipment.quantity || 1;
 				break;
 			case 'quantity':
 				value.shipment.quantity = event.target.value;
 				break;
 			case 'contractor':
-				value.shipment.contractor = data.contractors.filter(c => {return c.id == event.target.value})[0];
+				value.shipment.contractor = visible.contractors.filter(c => {return c.id == event.target.value})[0];
 				break;
 			default: break;
 		}
 		setVisible(value);
 	}
-	const editHandler = (id) => {
+	const editHandler = async (id) => {
 		let value = Object.assign({}, visible);
-		value.shipment = data.shipments.filter(p => { return p.id === id })[0];
-		value.product = data.funds.filter(p => { return p.id === value.shipment.product.id })[0] || {
-			id: value.shipment.product.id,
-			productTitle: value.shipment.product.title,
-			balance: 0,
-			measureTitle: value.shipment.product.measure.title
-		}
-		value.selectedProduct = value.shipment.product.id;
-		value.contractor = value.shipment.contractor.id;
-		value.quantity = value.shipment.quantity;
+		value.shipment = value.shipment || {};
+		value.shipment = data.shipments.filter(p => { return p.id === id })[0];		
+		value.funds = await request(`/api/v1/funds`,'GET',null,{Authorization: `Bearer ${token}`});
+		value.fund = await request(`/api/v1/funds/product/${value.shipment.product.id}`,'GET',null,{Authorization: `Bearer ${token}`});
+		value.contractors =  await request('/api/v1/contractors','GET',null,{Authorization: `Bearer ${token}`});
 		value.visible = true; 
 		value.text =  'Редактирование отгрузки:';
 		value.method = 'PUT';
+		console.log(value)
 		setVisible(value);
 	}
 	const saveHandler = async () => {
@@ -59,7 +55,7 @@ export const Shipments = ({ data, setData }) => {
 			var method = visible.method || 'POST';
 			let fetchedShipments;
 			if (method === 'DELETE') fetchedShipments = await request(`/api/v1/shipments/${visible.shipment.id}`, method, null,{Authorization: `Bearer ${token}`});
-			else fetchedShipments = await request('/api/v1/shipments', method, visible.shipment,{Authorization: `Bearer ${token}`});
+			else fetchedShipments = await request('/api/v1/transactions/shipment', method, visible.shipment,{Authorization: `Bearer ${token}`});
 			const fetchedFunds = await request('/api/v1/funds','GET',null,{Authorization: `Bearer ${token}`});
 			const fetchedContractors = await request('/api/v1/contractors','GET',null,{Authorization: `Bearer ${token}`});
 			
@@ -96,17 +92,17 @@ export const Shipments = ({ data, setData }) => {
 				</div>
 			</div> }
 			{ visible.visible && <div className="container-flux">
-				<h5>{ visible.text || 'Новая отгрузка товара:' }</h5>
+				<h6>{ visible.text || 'Новая отгрузка товара:' }</h6>
 				<div className="row">
 					<div className="input-field col xl4">
 						<select 
 							id="product"
 							name="product"
 							onChange = { changeHandler }
-							defaultValue = { visible.selectedProduct }
+							defaultValue = { visible.shipment ? visible.shipment.product.id : "" }
 							>
 							<option key="-1" value="-1"></option>
-							{ data.funds && data.funds.map(fund => {
+							{ visible.funds && visible.funds.map(fund => {
 								return (
 									<option key={ fund.id } value={ fund.id }>{ fund.product.title }</option>
 								)
@@ -119,7 +115,7 @@ export const Shipments = ({ data, setData }) => {
 							name="balance"
 							type = "text"
 							readOnly
-							defaultValue = { visible.product ? visible.product.balance : '' }
+							defaultValue = { visible.fund ? visible.fund.balance : '' }
 						/>
 						<label htmlFor = "balance"> В наличии </label>
 					</div>
@@ -129,26 +125,26 @@ export const Shipments = ({ data, setData }) => {
 							name="quantity"
 							type = "text"
 							onChange = { changeHandler }
-							defaultValue = { visible.quantity }
+							defaultValue = { visible.shipment ? visible.shipment.quantity : '' }
 						/> 
 						<label htmlFor = "quantity" >Выдать</label> 
 					</div>
 					<div className="col xl1 input-field">
 						<input 
-							name="measure"
+							name="unit"
 							type = "text"
 							readOnly
-							defaultValue = { visible.shipment ? visible.shipment.product.measure.title : '' }
+							defaultValue = { visible.shipment ? visible.shipment.product.unit.title : '' }
 						/> 
 					</div>
 					<div className="col xl4 input-field">
 						<select
 							name="contractor"
 							onChange = { changeHandler }
-							defaultValue={ visible.contractor }
+							defaultValue={ visible.shipment && visible.shipment.contractor ? visible.shipment.contractor.id : -1 }
 							>
 							<option key={ -1 } value="-1"></option>
-							{ data.contractors.map(contractor => {
+							{ visible.contractors && visible.contractors.map(contractor => {
 								return (
 									<option key={ contractor.id } value={ contractor.id }>{contractor.title}</option>
 								)
@@ -178,9 +174,9 @@ export const Shipments = ({ data, setData }) => {
 							{ data.shipments.map(shipment => {
 								return (
 									<tr key={shipment.id} onClick={ editHandler.bind(this, shipment.id) }>
-										<td>{ new Date(shipment.shipmentDate).toLocaleString() }</td>
+										<td>{ new Date(shipment.transactionDate).toLocaleString() }</td>
 										<td> { shipment.product.title } </td>
-										<td> { shipment.quantity } { shipment.product.measure.title } </td>
+										<td> { shipment.quantity } { shipment.product.unit.title } </td>
 										<td> { shipment.contractor ? shipment.contractor.title : '' } </td>
 										<td> { shipment.user ? shipment.user.lastname : '' } </td>
 									</tr>

@@ -10,7 +10,7 @@ export const Postings = ({ data, setData }) => {
 	const [visible, setVisible] = useState({visible: false})
 
 	const createHandler = async () => {
-		setVisible({ visible: true });
+		setVisible({ visible: true, posting: {} });
 	}
 	const changeHandler = event => {
 		let value = Object.assign({},visible);
@@ -19,6 +19,10 @@ export const Postings = ({ data, setData }) => {
 			case 'product':
 				value.posting.product = data.products.filter(p => {return p.id == event.target.value})[0];
 				value.selectedProduct = event.target.value;
+				value.posting.quantity = value.posting.quantity || 1;
+				break;
+			case 'contractor':
+				value.posting.contractor = data.contractors.filter(c => { return c.id == event.target.value })[0]
 				break;
 			case 'quantity':
 				value.posting.quantity = event.target.value;
@@ -41,8 +45,8 @@ export const Postings = ({ data, setData }) => {
 		try {
 			var method = visible.method || 'POST';
 			let fetched;
-			if (method === 'DELETE') fetched = await request(`/api/v1/postings/${visible.posting.id}`, method, null,{Authorization: `Bearer ${token}`});
-			else fetched = await request('/api/v1/postings', method, visible.posting,{Authorization: `Bearer ${token}`});
+			if (method === 'DELETE') fetched = await request(`/api/v1/transactions/${visible.posting.id}`, method, null,{Authorization: `Bearer ${token}`});
+			else fetched = await request('/api/v1/transactions/supply', method, visible.posting,{Authorization: `Bearer ${token}`});
 			setVisible({visible: false})
 			setData({
 				postings: fetched,
@@ -100,26 +104,32 @@ export const Postings = ({ data, setData }) => {
 							type = "text"
 							onChange = { changeHandler }
 							onKeyPress = { event => { console.log(event.key); if (event.key === 'Enter') saveHandler() } }
-							defaultValue = { visible.quantity }
+							defaultValue = { visible.posting.quantity}
 						/> 
 						<label htmlFor = "quantity" > Количество </label> 
 					</div>
 					<div className="col xl1 input-field">
 						<input 
-							name="measure"
+							name="unit"
 							type = "text"
 							readOnly
-							defaultValue = { visible.posting ? visible.posting.product.measure.title : '' }
+							defaultValue = { visible.posting.product ? visible.posting.product.unit.title : '' }
 						/> 
 					</div>
 					<div className="col xl4 input-field">
-						<input 
+						<select
 							name="contractor"
-							type = "text"
-							readOnly
-							defaultValue = { visible.posting ? visible.posting.product.contractor.title : '' }
-						/> 
-						<label htmlFor = "Контрактор" > Поставщик </label>
+							onChange = { changeHandler }
+							defaultValue={ visible.posting.contractor ? visible.posting.contractor.id : -1 }
+							>
+							<option key={ -1 } value="-1"></option>
+							{ data.contractors.map(contractor => {
+								return (
+									<option key={ contractor.id } value={ contractor.id }>{contractor.title}</option>
+								)
+							})}
+						</select>
+						<label htmlFor = "contractor" > Поставщик </label>
 					</div>
 				</div>
 				<div className="row">
@@ -143,10 +153,10 @@ export const Postings = ({ data, setData }) => {
 							{ data.postings.map(posting => {
 								return (
 									<tr key={posting.id} onClick={ editHandler.bind(this, posting.id) } >
-										<td>{ new Date(posting.postingDate).toLocaleString() }</td>
+										<td>{ new Date(posting.transactionDate).toLocaleString() }</td>
 										<td> { posting.product.title } </td>
-										<td> { posting.quantity } { posting.product.measure.title } </td>
-										<td> { posting.product.contractor.title } </td>
+										<td> { posting.quantity } { posting.product.unit.title } </td>
+										<td> { posting.contractor.title } </td>
 										<td> { posting.user ? posting.user.lastname : '' } </td>
 									</tr>
 								)

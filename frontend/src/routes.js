@@ -7,7 +7,7 @@ import {ProductsFundsPage} from './pages/products/FundsPage'
 import {ProductsOperationPage} from './pages/products/OperationsPage'
 import {CatalogProductsPage} from './pages/catalogs/CatalogProductsPage'
 import {CatalogCategoriesPage} from './pages/catalogs/CatalogCategoriesPage'
-import {CatalogMeasuresPage} from './pages/catalogs/CatalogMeasuresPage'
+import {CatalogUnitsPage} from './pages/catalogs/CatalogUnitsPage'
 import {CatalogContractorsPage} from './pages/catalogs/CatalogContractorsPage'
 
 export const useRoutes = isAuthenticated => {
@@ -17,7 +17,7 @@ export const useRoutes = isAuthenticated => {
 				<Route path="/catalogs" exact> <Redirect to="/catalogs/products"/> </Route>
 				<Route path="/catalogs/products" exact> <CatalogProductsPage /> </Route>
 				<Route path="/catalogs/categories" exact> <CatalogCategoriesPage /> </Route>				
-				<Route path="/catalogs/measures" exact> <CatalogMeasuresPage /> </Route>
+				<Route path="/catalogs/units" exact> <CatalogUnitsPage /> </Route>
 				<Route path="/catalogs/contractors" exact> <CatalogContractorsPage /> </Route>
                 <Route path="/products/posting" exact> <ProductsPostingPage /> </Route>
 				<Route path="/products/shipment" exact> <ProductsShipmentPage /> </Route>

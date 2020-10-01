@@ -7,7 +7,7 @@ export const SideBar = () =>{
 			<ul className="collection">
 				<li className="collection-item" ><NavLink className="btn" to="/catalogs/products">Товары</NavLink></li>
 				<li className="collection-item" ><NavLink className="btn" to="/catalogs/categories">Категории</NavLink></li>
-				<li className="collection-item" ><NavLink className="btn" to="/catalogs/measures">Единицы измерения</NavLink></li>
+				<li className="collection-item" ><NavLink className="btn" to="/catalogs/units">Единицы измерения</NavLink></li>
 				<li className="collection-item" ><NavLink className="btn" to="/catalogs/contractors">Контрагенты</NavLink></li>
 			</ul>
 		</div>

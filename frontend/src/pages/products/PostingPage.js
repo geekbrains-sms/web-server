@@ -11,11 +11,13 @@ export const ProductsPostingPage = () =>{
 	const [ data, setData] = useState({})
 	const fetchData = useCallback(async () => {
 		try {
-			const fetchedPostings = await request('/api/v1/postings','GET',null,{Authorization: `Bearer ${token}`});
+			const fetchedPostings = await request('/api/v1/transactions/supply','GET',null,{Authorization: `Bearer ${token}`});
 			const fetchedProducts = await request('/api/v1/products','GET',null,{Authorization: `Bearer ${token}`});
+			const fetchedContractors = await request('/api/v1/contractors','GET',null,{Authorization: `Bearer ${token}`});
 			setData({
 				postings: fetchedPostings,
-				products: fetchedProducts
+				products: fetchedProducts,
+				contractors: fetchedContractors
 			})
 		} catch (error) {}
 	},[request, token])

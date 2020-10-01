@@ -4,11 +4,11 @@ const path = require('path');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 
-console.log(process.env.NODE_ENV);
-app.use('/api', createProxyMiddleware({ 
-	target: 'http://localhost:8189', changeOrigin: true 
-}));
 if (process.env.NODE_ENV === 'production'){
+	const JAVA_APP_PORT = config.get('java_app_port');
+	app.use('/api', createProxyMiddleware({ 
+		target: `http://localhost:${JAVA_APP_PORT}`, changeOrigin: true 
+	}));	
 	app.use('/', express.static(path.join(__dirname, 'frontend', 'build')));
 	app.get("*", (req, res) => {
 		res.sendFile(path.resolve(__dirname, 'frontend','build','index.html'));

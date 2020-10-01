@@ -54,7 +54,7 @@ export const Contractors = ({ contractors, setContractors }) => {
 				</div>
 			</div> }
 			{ visible.visible && <div className="row">
-				<h5>{ visible.text || 'Ноый контрагент:' }</h5>
+				<h5>{ visible.text || 'Новый контрагент:' }</h5>
 				<div className = "input-field col s12">
 					<input 
 						id = "title"

@@ -3,35 +3,35 @@ import { useHttp } from '../../hooks/http.hook'
 import {AuthContext} from '../../context/AuthContext'
 import { useMessage } from '../../hooks/message.hook'
 
-export const MeasuresList = ({ measures, setMeasures }) => {
+export const UnitsList = ({ Units, setUnits }) => {
 	const { token } = useContext(AuthContext)
 	const { request, error, clearError } = useHttp()
 	const message = useMessage()
-	const [visible, setVisible] = useState({measure: {}, visible: false})
-	const measure = {}
+	const [visible, setVisible] = useState({Unit: {}, visible: false})
+	const Unit = {}
 
 	const createHandler = async () => {
-		setVisible({ measure: {}, visible: true });
+		setVisible({ Unit: {}, visible: true });
 	}
 	const changeHandler = event => {
-		measure.title = event.target.value
-		measure.id = visible.measure.id
+		Unit.title = event.target.value
+		Unit.id = visible.Unit.id
 	}
 	const editHandler = (id, value) => {
-		setVisible({measure: {id: id, title: value}, visible: true, text: 'Редактирование единицы измерения:', method: 'PUT' })
+		setVisible({Unit: {id: id, title: value}, visible: true, text: 'Редактирование единицы измерения:', method: 'PUT' })
 	}
 	const saveHandler = async () => {
 		try {
 			var method = visible.method || 'POST';
 			let fetched
-			if (method === 'DELETE') fetched = await request(`/api/v1/measures/${visible.measure.id}`, method, null,{Authorization: `Bearer ${token}`});
-			else fetched = await request('/api/v1/measures', method, measure,{Authorization: `Bearer ${token}`});
-			setMeasures(fetched)
+			if (method === 'DELETE') fetched = await request(`/api/v1/units/${visible.Unit.id}`, method, null,{Authorization: `Bearer ${token}`});
+			else fetched = await request('/api/v1/units', method, Unit,{Authorization: `Bearer ${token}`});
+			setUnits(fetched)
 			setVisible(false)
 		} catch (error) {}
 	}
 	const deleteHandler = (id, value) => {
-		setVisible({measure: {id: id, title: value}, visible: true, text: 'Удаление единицы измерения:', method: 'DELETE' })
+		setVisible({Unit: {id: id, title: value}, visible: true, text: 'Удаление единицы измерения:', method: 'DELETE' })
 	}
 	const cancelHandler = () => {
 		setVisible({visible: false})
@@ -60,14 +60,14 @@ export const MeasuresList = ({ measures, setMeasures }) => {
 						id = "title"
 						type = "text"
 						onChange = { changeHandler }
-						defaultValue = { visible.measure.title }
+						defaultValue = { visible.Unit.title }
 					/> 
 					<label htmlFor = "title" > Наименование </label> 
 				</div> 
 				<div className="col xl2 offset-xl4"><button className="btn" onClick={ saveHandler }>Сохранить</button></div>
 				<div className="col xl2"><button className="btn grey" onClick={ cancelHandler }>Отмена</button></div>
 			</div> }
-			{ !!measures.length && <div className="row">
+			{ !!Units.length && <div className="row">
 				<div className="col xl12">
 					<table className="my-table-class-1 striped">
 						<thead>
@@ -76,11 +76,11 @@ export const MeasuresList = ({ measures, setMeasures }) => {
 							</tr>
 						</thead>
 						<tbody>
-							{ measures.map(measure => {
+							{ Units.map(Unit => {
 								return (
-									<tr key={measure.id}>
-										<td onClick={ editHandler.bind(this, measure.id, measure.title) }>{ measure.title }</td>
-										<td onClick={ deleteHandler.bind(this, measure.id, measure.title) }><span className="material-icons grey-text">delete</span></td>
+									<tr key={Unit.id}>
+										<td onClick={ editHandler.bind(this, Unit.id, Unit.title) }>{ Unit.title }</td>
+										<td onClick={ deleteHandler.bind(this, Unit.id, Unit.title) }><span className="material-icons grey-text">delete</span></td>
 									</tr>
 								)
 							}) }

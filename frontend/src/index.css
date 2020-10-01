@@ -3,7 +3,7 @@ body{
     background-color: #E5E5E5;
 	background-image: url("images/01a3fd9b46d5a5af6cb651a59c44b2aade95e9a0.jpeg");
     background-repeat: no-repeat;
-    background-size: cover;
+	background-size: cover;
 }
 
 .row.header{
@@ -92,7 +92,7 @@ input.yellow-input:focus {
 .content{
 	background: white;
 	padding: 1rem;
-	height: 92vh;
+	min-height: 786px;
 }
 .main-block-1{
     width: 564px;
@@ -159,11 +159,11 @@ input.yellow-input:focus {
 	cursor: pointer;
 }
 .menu-sidebar{
-	border: 1px solid #ddd;
-	border-radius: 0 0.7rem 0 0;
-	height: 88.5vh;
+	/* border: 1px solid #ddd;
+	border-radius: 0 0.7rem 0 0; */
+	min-height: 768px;
 	text-align: center;
-	box-shadow: 0px 4px 4px #ccc;
+	/* box-shadow: 0px 4px 4px #ccc; */
 	/* background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(0,67,99,0.2) 100%); */
 }
 .menu-sidebar .btn{

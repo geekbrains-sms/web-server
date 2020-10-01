@@ -26,8 +26,8 @@ export const Funds = ({ data, setData }) => {
 						<thead>
 							<tr>
 								<th>Товар</th>
-								<th>Поставщик</th>
 								<th>Количество</th>
+								<th>Ед. изм.</th>
 								<th>Категории</th>
 							</tr>
 						</thead>
@@ -36,8 +36,8 @@ export const Funds = ({ data, setData }) => {
 								return (
 									<tr key={fund.id}>
 										<td> { fund.product.title } </td>
-										<td> { fund.product.contractor.title } </td>
-										<td> { fund.balance } { fund.product.measure.title } </td>
+										<td> { fund.balance } </td>
+										<td> { fund.product.unit.title } </td>
 										<td>
 											<ul>
 												{ fund.product.categories.map(category => {

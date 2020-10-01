@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import ReactFileReader from 'react-file-reader'
 import { useHttp } from '../../hooks/http.hook'
 import {AuthContext} from '../../context/AuthContext'
 import { useMessage } from '../../hooks/message.hook'
@@ -13,37 +14,48 @@ export const ProductsList = ({ products, setProducts }) => {
 	const createHandler = async () => {
 		try {
 			const fetched = await request('/api/v1/categories','GET',null,{Authorization: `Bearer ${token}`});
-			const fetchedMeasures = await request('/api/v1/measures','GET',null,{Authorization: `Bearer ${token}`});
+			const fetchedUnits = await request('/api/v1/units','GET',null,{Authorization: `Bearer ${token}`});
 			const fetchedContractors = await request('/api/v1/contractors','GET',null,{Authorization: `Bearer ${token}`});
 			setVisible({ 
 				product: {}, 
 				categories: fetched, 
-				measures: fetchedMeasures,
+				units: fetchedUnits,
 				contractors: fetchedContractors,
 				visible: true 
 			});
 		} catch (error) {}
 	}
+	const fileHandler = files => {
+		let value = Object.assign({},visible);
+		value.product.image = {
+			title: files.fileList[0].name,
+			image: files.base64
+		}
+		setVisible(value);
+	}
 	const changeHandler = (event) => {
-		let value = visible.product
+		let value = Object.assign({},visible);
 		switch(event.target.name){
 			case 'categories':
-				value.categories = [];
+				value.product.categories = [];
 				var options = event.target.options;
 				for (var i = 0; i<options.length; i++){
 					if (options[i].selected){
-						value.categories.push( visible.categories[options[i].value] ) 
+						value.product.categories.push( visible.categories[options[i].value] ) 
 					}
 				}
 				break
-			case 'measure':
-				value.measure = visible.measures[event.target.value]; break;
-			case 'contractor':
-				value.contractor = visible.contractors.filter(c => {return c.id == event.target.value})[0]
+			case 'categoriesText':
+				value.product.categories = event.target.value.split(', ').map(value => {return {title: value} })
 				break;
-			default: value.title = event.target.value; break;
+			case 'unitText':
+				value.product.unit = {title: event.target.value };
+				break;
+			case 'unit':
+				value.product.unit = visible.units[event.target.value]; break;
+			default: value.product.title = event.target.value; break;
 		}
-		product = value;
+		product = value.product;
 	}
 	const editHandler = async (action,event) => {
 		try {
@@ -51,23 +63,23 @@ export const ProductsList = ({ products, setProducts }) => {
 			product = products[id]
 			let categories = product.categories
 			const fetched = await request('/api/v1/categories','GET',null,{Authorization: `Bearer ${token}`});
-			const fetchedMeasures = await request('/api/v1/measures','GET',null,{Authorization: `Bearer ${token}`});
+			const fetchedUnits = await request('/api/v1/units','GET',null,{Authorization: `Bearer ${token}`});
 			const fetchedContractors = await request('/api/v1/contractors','GET',null,{Authorization: `Bearer ${token}`});
 			let allCtegoriesId = fetched.map((c)=>{return c.id})
 			let productCategoriesId = categories.map((c)=>{return c.id })
 			let commonId = productCategoriesId.filter(x => allCtegoriesId.includes(x))
 			let commonIndex = commonId.map((id) => {return allCtegoriesId.indexOf(id)})
-			let selectedMeasure = -1;
-			if (product.measure) fetchedMeasures.map((m,i) => {if (m.id === product.measure.id) selectedMeasure = i})
+			let selectedUnit = -1;
+			if (product.unit) fetchedUnits.map((m,i) => {if (m.id === product.unit.id) selectedUnit = i})
 			let selectedContractor = -1;
 			if (product.contractor) selectedContractor = product.contractor.id;
 			setVisible({
 				product: product, 
 				categories: fetched, 
-				measures: fetchedMeasures,
+				units: fetchedUnits,
 				contractors: fetchedContractors,
 				selected: commonIndex,
-				measure: selectedMeasure,
+				unit: selectedUnit,
 				contractor: selectedContractor,
 				visible: true, 
 				text: `${action === 'edit' ? 'Редактирование' : 'Удаление'} номенклатуры:`, 
@@ -82,7 +94,7 @@ export const ProductsList = ({ products, setProducts }) => {
 			var method = visible.method || 'POST';
 			let fetched
 			if (method === 'DELETE') fetched = await request(`/api/v1/products/${visible.product.id}`, method, null,{Authorization: `Bearer ${token}`});
-			else fetched = await request('/api/v1/products', method, product,{Authorization: `Bearer ${token}`});
+			else fetched = await request('/api/v1/products', method, visible.product,{Authorization: `Bearer ${token}`});
 			setVisible({visible: false})
 			setProducts(fetched)
 		} catch (error) {}
@@ -111,88 +123,85 @@ export const ProductsList = ({ products, setProducts }) => {
 			{ visible.visible && <div className="container-flux">
 				<h5>{ visible.text || 'Новая номенклатура товара:' }</h5>
 				<div className="row">
-					<div className = "input-field col s12">
-						<input 
-							id = "title"
-							name="title"
-							type = "text"
-							onChange = { changeHandler }
-							defaultValue = { visible.product.title }
-						/> 
-						<label htmlFor = "title" > Наименование </label> 
+					<div className="col xl3 left">
+						<ReactFileReader handleFiles={ fileHandler } base64={true} multipleFiles={false}>	
+							{	visible.product.image 
+								? <img className="responsive-img" src={ visible.product.image.image} alt=""/> 
+								: <div>Фото нет</div> 
+							}
+						</ReactFileReader>
+					</div>
+					<div className = "col xl9">
+						<div className="row">
+							<div className="input-field col xl12">
+								<input 
+									id = "title"
+									name="title"
+									type = "text"
+									onChange = { changeHandler }
+									defaultValue = { visible.product.title }
+								/> 
+								<label htmlFor = "title" > Наименование </label>
+							</div>
+						</div>
+						<div className="row">
+							<div className="input-field col xl9">
+								<input 
+									id = "categoriesText"
+									name="categoriesText"
+									type = "text"
+									onChange = { changeHandler }
+									defaultValue = { 
+										visible.product.categories 
+										? visible.product.categories.map(category => category.title).join(', ')
+										: ''}
+								/>
+								<label htmlFor="categoriesText">Категории</label>	
+							</div>
+							<div className=" input-field btn btn-small"> Выбрать </div>						 
+						</div>
+						<div className="row">
+							<div className = "input-field col xl9">
+								<input 
+									id = "unitText"
+									name="unitText"
+									type = "text"
+									onChange = { changeHandler }
+									defaultValue = { visible.product.unit ? visible.product.unit.title : '' }
+								/> 
+								<label htmlFor = "title" > Единицы измерения </label> 
+							</div>
+							<div className=" input-field btn-small">
+								Выбрать
+							</div>
+						</div>
 					</div>
 				</div>
 				<div className="row">
-					<div className="input-field col xl12">
-						<select 
-							name="categories"
-							multiple 
-							onChange = { changeHandler } 
-							defaultValue={ visible.selected }>
-							{ visible.categories.map((category,index) => {
-								return (
-									<option key={ category.id } value={ index }>{category.title}</option>
-								)
-							})}
-						</select>
-						<label>Категории</label>
-					</div>
-				</div>
-				<div className="row">
-					<div className="input-field col xl2">
-						<select
-							name="measure"
-							onChange = { changeHandler }
-							defaultValue={ visible.measure }
-							>
-							<option key={ -1 } value="-1"></option>
-							{ visible.measures.map((measure,index) => {
-								return (
-									<option key={ measure.id } value={ index }>{measure.title}</option>
-								)
-							})}
-						</select>
-						<label>Единица измерения</label>
-					</div>
-					<div className="input-field col xl10">
-						<select
-							name="contractor"
-							onChange = { changeHandler }
-							defaultValue={ visible.contractor }
-							>
-							<option key={ -1 } value="-1"></option>
-							{ visible.contractors.map(contractor => {
-								return (
-									<option key={ contractor.id } value={ contractor.id }>{contractor.title}</option>
-								)
-							})}
-						</select>
-						<label>Поставщик</label>
-					</div>
 					<div className="col xl2 offset-xl6"><button className="btn" onClick={ saveHandler }>Сохранить</button></div>
 					<div className="col xl2"><button className="btn grey" onClick={ cancelHandler }>Отмена</button></div>
 				</div>
 			</div> }
 			{ !!products.length && <div className="row">
 				<div className="col xl12">
-					<table className="my-table-class-1 striped">
+					<table className="my-table-class-1 striped responsive-table">
 						<thead>
 							<tr>
-								<th>Название</th>
+								<th colSpan="2">Название</th>
 								<th>Ед. измерения</th>
 								<th>Категории</th>
-								<th>Поставщик</th>
 							</tr>
 						</thead>
 						<tbody>
 							{ products.map((product, key) => {
 								return (
 									<tr key={key}  id={key} >
+										<td><img width="30rem" src={ product.image ? product.image.image : ""} alt=""/></td>
 										<td onClick={ editHandler.bind(this, 'edit') }>{ product.title }</td>
-										<td>{ product.measure ? product.measure.title : '' }</td>
+										<td>{ product.unit ? product.unit.title : '' }</td>
 										<td> 
 											<ul>
-												{ product.categories.map(category => {
+												{ product.categories && product.categories.map(category => {
 													return (
 														<li key={ category.id }>
 															{ category.title }
@@ -201,7 +210,6 @@ export const ProductsList = ({ products, setProducts }) => {
 												}) }
 											</ul> 
 										</td>
-											<td> { product.contractor ? product.contractor.title : '' } </td>
 										<td onClick={ editHandler.bind(this, 'delete') }><span className="material-icons grey-text">delete</span></td>
 									</tr>
 								)

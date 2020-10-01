@@ -11,13 +11,9 @@ export const ProductsShipmentPage = () =>{
 	const [ data, setData] = useState({})
 	const fetchData = useCallback(async () => {
 		try {
-			const fetchedShipments = await request('/api/v1/shipments','GET',null,{Authorization: `Bearer ${token}`});
-			const fetchedFunds = await request('/api/v1/funds','GET',null,{Authorization: `Bearer ${token}`});
-			const fetchedContractors = await request('/api/v1/contractors','GET',null,{Authorization: `Bearer ${token}`});
+			const fetchedShipments = await request('/api/v1/transactions/shipment','GET',null,{Authorization: `Bearer ${token}`});
 			setData({
-				shipments: fetchedShipments,
-				funds: fetchedFunds,
-				contractors: fetchedContractors
+				shipments: fetchedShipments	
 			})
 		} catch (error) {}
 	},[request, token])
