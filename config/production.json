@@ -1,0 +1,5 @@
+{
+	"port": 8190,
+	"java_app_port": 8189,
+	"baseUrl": "http://localhost"
+}

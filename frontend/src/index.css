@@ -1,0 +1,208 @@
+@import "~materialize-css/dist/css/materialize.min.css";
+body{
+    background-color: #E5E5E5;
+	background-image: url("images/01a3fd9b46d5a5af6cb651a59c44b2aade95e9a0.jpeg");
+    background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.row.header{
+	margin: 0;
+	padding: 0;
+	background-color: #0E364D;
+}
+.header nav{
+	background-color: transparent;
+}
+.brand-logo{
+	font-family: Roboto;
+    font-weight: bold;
+	font-size: 40px!important;
+	margin: 0 1rem;
+    line-height: 56px;
+    color: rgba(14, 54, 77, 0.78)!important;
+    text-shadow: 2px 2px 2px #C2E5F9;
+}
+.button-in-out{
+	font-family: Roboto;
+	font-size: 20px;
+    color: #C2E5F9;
+    border: 1px solid #F2F2F2;
+	border-radius: 0.5rem;
+	margin: 1rem;
+	padding: 0.5rem;
+	background-color: transparent;
+}
+
+input.yellow-input{
+    border-bottom: 1px solid #bbdefb!important;
+	background: transparent!important;
+	color: white;
+}
+
+input.yellow-input + label{
+	color: #bbdefb!important;
+}
+
+input.yellow-input:focus + label{
+	color: #ffeb3b!important;
+	margin-bottom: 5rem;
+}
+input.yellow-input:focus {
+    border-bottom: 1px solid #ffeb3b!important;
+	background: transparent!important;
+}
+#categories-list{
+	position: absolute;
+	z-index: 1;
+	background-color: white;
+	min-width: 15rem;
+	max-height: 10rem;
+	text-align: left;
+}
+#categories-list .footer{
+	text-align: center;
+}
+.card{
+	flex: auto;
+}
+#auth-form{
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #0E364D30;
+}
+#auth-card{
+	width: 30%;
+	margin: auto;
+	top: calc(25%);
+	box-shadow: 2px 4px 4px #909090;
+}
+.btn.login{
+	background: linear-gradient(180deg, #4caf50 0%, #a5d6a7 100%);
+	text-shadow: 1px 1px 1px #2e7d32;
+}
+.btn.register{
+	background: linear-gradient(180deg, #48A0C1 0%, #ACE4F9 100%);
+	text-shadow: 1px 1px 1px #0277bd;
+}
+.content{
+	background: white;
+	padding: 1rem;
+	min-height: 786px;
+}
+.main-block-1{
+    width: 564px;
+    height: 200px;
+    font-family: Montserrat;
+    font-size: 18px;
+	margin: auto;
+	padding: 1rem;
+    text-align: justify;
+}
+.main-block-1 img{
+	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+#register-link{
+    width: 263px;
+    height: 56px;
+    background: linear-gradient(180deg, #48A0C1 0%, #ACE4F9 100%);
+    border-radius: 5px;
+    font-family: Montserrat;
+    font-weight: 500;
+    font-size: 24px;
+    display: block;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    margin: auto;
+    margin-top: 50px;
+    text-shadow: 1px 1px 1px #48A0C1;
+}
+#register-link:hover{
+    background: linear-gradient(180deg, #0083B5 0%, #ACE4F9 100%);
+}
+.main-block-2{
+    width: 629px;
+    height: 153px;
+    font-family: Montserrat;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 29px;
+    display: block;
+    align-items: center;
+    text-align: center;
+    margin: auto;
+    margin-top: 65px;
+}
+.main-block-2 p{
+    font-weight: 600;
+}
+.main-block-3{
+    width: 521px;
+    height: 225px;
+    font-family: Montserrat;
+    font-size: 18px;
+	text-align: justify;
+	margin: auto;
+}
+.main-block-3 img{
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+#close{
+	border-radius: 1rem;
+	border: 1px solid #607d8b;
+	transform: translate(50%,-50%);
+	cursor: pointer;
+}
+.menu-sidebar{
+	/* border: 1px solid #ddd;
+	border-radius: 0 0.7rem 0 0; */
+	min-height: 768px;
+	text-align: center;
+	/* box-shadow: 0px 4px 4px #ccc; */
+	/* background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(0,67,99,0.2) 100%); */
+}
+.menu-sidebar .btn{
+	width: 15rem;
+	background: linear-gradient(180deg, rgba(84,110,122,1) 0%, rgba(84,110,122,1) 0%, rgba(144,164,174,1) 100%);
+}
+.collection{
+	border: none;
+}
+.collection-item{
+	background: transparent!important;
+	border: none!important;
+	padding: 0.5rem!important;
+}
+.work-area{
+	/* border: 1px solid #b0bec5;
+	border-radius: 0.5rem; */
+	width: 73%!important;
+	height: 88.5vh;
+	text-align: center;
+	/* box-shadow: 2px 2px 4px #ccc; */
+	margin-left: 1rem!important;
+	/* background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(0,67,99,0.2) 100%); */
+	display: flex;
+	flex-direction: column;
+
+}
+.button-with-icons{
+	white-space: nowrap;
+	vertical-align: middle;
+}
+.my-table-class-1 ul, .my-table-class-1 td{
+	padding: 3px;
+	margin: 0;
+}
+#nomenclature-choice{
+	max-height: 15rem;
+	overflow: auto;
+}
+.active{
+	color: #ffeb3b;
+}
